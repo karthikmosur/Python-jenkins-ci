@@ -1,0 +1,23 @@
+pipeline {
+  agent {
+    docker {
+      image 'python:3.11-slim'
+      label 'ec2'
+    }
+  }
+
+  triggers {
+    pollSCM('H/2 * * * *')  // every 2 minutes
+  }
+
+  stages {
+    stage('Run Python App') {
+      steps {
+        sh '''
+          python --version
+          python app.py
+        '''
+      }
+    }
+  }
+}
