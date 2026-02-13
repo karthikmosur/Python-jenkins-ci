@@ -7,13 +7,22 @@ pipeline {
   }
 
   triggers {
-    pollSCM('H/2 * * * *')  // every 2 minutes
+    pollSCM('H/2 * * * *')
   }
 
   stages {
+    stage('Checkout Code') {
+      steps {
+        checkout scm
+      }
+    }
+
     stage('Run Python App') {
       steps {
         sh '''
+          echo "Workspace contents:"
+          ls -la
+
           python --version
           python app.py
         '''
