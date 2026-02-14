@@ -19,12 +19,15 @@ pipeline {
     }
 
     stage('Install Dependencies') {
-      steps {
-        sh '''
-          pip install --user -r requirements.txt
-        '''
-      }
-    }
+  steps {
+    sh '''
+      python -m venv venv
+      . venv/bin/activate
+      pip install -r requirements.txt
+    '''
+  }
+}
+
 
     stage('Run Unit Tests') {
       steps {
