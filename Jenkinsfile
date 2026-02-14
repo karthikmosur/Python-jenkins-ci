@@ -5,7 +5,8 @@ pipeline {
       label 'ec2'
     }
   }
-   triggers {
+
+  triggers {
     pollSCM('H/2 * * * *')
   }
 
@@ -22,15 +23,12 @@ pipeline {
     }
 
     stage('Install Dependencies') {
-  steps {
-    sh '''
-      python -m venv venv
-      . venv/bin/activate
-      pip install -r requirements.txt
-    '''
-  }
-}
-
+      steps {
+        sh '''
+          pip install --user -r requirements.txt
+        '''
+      }
+    }
 
     stage('Run Unit Tests') {
       steps {
@@ -71,4 +69,12 @@ pipeline {
       }
     }
   }
+
+  post {
+    always {
+      cleanWs()
+    }
+  }
 }
+
+
