@@ -25,7 +25,10 @@ pipeline {
     stage('Install Dependencies') {
       steps {
         sh '''
-          pip install --user -r requirements.txt
+          python -m venv .venv
+          . .venv/bin/activate
+          python -m pip install --upgrade pip setuptools wheel
+          pip install -r requirements.txt
         '''
       }
     }
@@ -33,6 +36,7 @@ pipeline {
     stage('Run Unit Tests') {
       steps {
         sh '''
+          . .venv/bin/activate
           pytest --junitxml=pytest-report.xml
         '''
       }
@@ -46,6 +50,7 @@ pipeline {
     stage('SAST - Bandit') {
       steps {
         sh '''
+          . .venv/bin/activate
           bandit -r . -f json -o bandit-report.json || true
         '''
       }
@@ -59,6 +64,7 @@ pipeline {
     stage('Dependency Scan - Safety') {
       steps {
         sh '''
+          . .venv/bin/activate
           safety check --json > safety-report.json || true
         '''
       }
