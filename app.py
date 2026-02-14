@@ -1,13 +1,5 @@
-print("Hello from GitHub-triggered Jenkins build 🚀")
-print("New change detected by Jenkins 🎯")
-print("Hello from GitHub-triggered Jenkins build 22🚀")
-print("Hello from GitHub-triggered Jenkins build 24🚀")
-print("Hello from GitHub-triggered Jenkins build 26🚀")
-print("Hello from GitHub-triggered Jenkins build 26")
-print("Hello from GitHub-triggered Jenkins build 28")
-print("Hello from GitHub-triggered Jenkins build 29")
-print("Hello from GitHub-triggered Jenkins build 32")
-print("hello world1")
-print("hello world2")
+def add(a, b):
+    return a + b
 
-
+if __name__ == "__main__":
+    print("Hello DevSecOps 🚀")
