@@ -5,6 +5,9 @@ pipeline {
       label 'ec2'
     }
   }
+   triggers {
+    pollSCM('H/2 * * * *')
+  }
 
   environment {
     PATH = "$HOME/.local/bin:$PATH"
