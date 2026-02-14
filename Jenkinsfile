@@ -10,23 +10,79 @@ pipeline {
     pollSCM('H/2 * * * *')
   }
 
+  options {
+    timestamps()
+  }
+
   stages {
+
     stage('Checkout Code') {
       steps {
         checkout scm
       }
     }
 
-    stage('Run Python App') {
+    stage('Install Dependencies') {
       steps {
         sh '''
-          echo "Workspace contents:"
-          ls -la
-
-          python --version
-          python app.py
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
         '''
       }
+    }
+
+    stage('Run Unit Tests') {
+      steps {
+        sh '''
+          pytest --junitxml=pytest-report.xml
+        '''
+      }
+      post {
+        always {
+          junit 'pytest-report.xml'
+        }
+      }
+    }
+
+    stage('SAST - Bandit') {
+      steps {
+        sh '''
+          bandit -r . -f json -o bandit-report.json || true
+        '''
+      }
+      post {
+        always {
+          archiveArtifacts artifacts: 'bandit-report.json', fingerprint: true
+        }
+      }
+    }
+
+    stage('Dependency Scan - Safety') {
+      steps {
+        sh '''
+          safety check --json > safety-report.json || true
+        '''
+      }
+      post {
+        always {
+          archiveArtifacts artifacts: 'safety-report.json', fingerprint: true
+        }
+      }
+    }
+  }
+
+  post {
+    success {
+      echo "✅ DevSecOps pipeline completed successfully"
+    }
+    unstable {
+      echo "⚠️ Vulnerabilities found – check reports"
+    }
+    failure {
+      echo "❌ Pipeline failed"
+    }
+    always {
+      cleanWs()
     }
   }
 }
