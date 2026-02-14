@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+.env
+.venv/
+pytest-report.xml
+bandit-report.json
+safety-report.json
