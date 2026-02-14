@@ -6,12 +6,8 @@ pipeline {
     }
   }
 
-  triggers {
-    pollSCM('H/2 * * * *')
-  }
-
-  options {
-    timestamps()
+  environment {
+    PATH = "$HOME/.local/bin:$PATH"
   }
 
   stages {
@@ -25,8 +21,7 @@ pipeline {
     stage('Install Dependencies') {
       steps {
         sh '''
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install --user -r requirements.txt
         '''
       }
     }
@@ -52,7 +47,7 @@ pipeline {
       }
       post {
         always {
-          archiveArtifacts artifacts: 'bandit-report.json', fingerprint: true
+          archiveArtifacts artifacts: 'bandit-report.json'
         }
       }
     }
@@ -65,24 +60,9 @@ pipeline {
       }
       post {
         always {
-          archiveArtifacts artifacts: 'safety-report.json', fingerprint: true
+          archiveArtifacts artifacts: 'safety-report.json'
         }
       }
-    }
-  }
-
-  post {
-    success {
-      echo "✅ DevSecOps pipeline completed successfully"
-    }
-    unstable {
-      echo "⚠️ Vulnerabilities found – check reports"
-    }
-    failure {
-      echo "❌ Pipeline failed"
-    }
-    always {
-      cleanWs()
     }
   }
 }
